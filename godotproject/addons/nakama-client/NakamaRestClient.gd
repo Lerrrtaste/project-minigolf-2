@@ -1098,7 +1098,7 @@ func write_tournament_record(tournament_id: String, score: int, subscore: int, m
 signal list_matches_completed (response, request)
 
 # Fetch list of running matches.
-func list_matches(limit: int, authoritative: bool, label: String, min_size: int, max_size: int, query: String):
+func list_matches(limit: int, authoritative: bool=false, label: String ="", min_size: int=-1, max_size: int=-1, query: String=""):
 	var request = {
 		method = HTTPClient.METHOD_GET,
 		path = 'v2/match',

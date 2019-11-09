@@ -1,5 +1,111 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://rooms/matchlist/matchlist.gd" type="Script" id=1]
 
 [node name="Matchlist" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="LstMatches" type="ItemList" parent="."]
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.5
+anchor_bottom = 0.75
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BtnJoinSelected" type="Button" parent="."]
+anchor_left = 0.05
+anchor_top = 0.8
+anchor_right = 0.05
+anchor_bottom = 0.8
+margin_right = 150.0
+margin_bottom = 40.0
+disabled = true
+text = "Join selected"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BtnJoinId" type="Button" parent="."]
+anchor_left = 0.05
+anchor_top = 0.8
+anchor_right = 0.05
+anchor_bottom = 0.8
+margin_top = 50.0
+margin_right = 150.0
+margin_bottom = 90.0
+text = "Join by match ID"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TxtId" type="LineEdit" parent="BtnJoinId"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 162.0
+margin_top = 4.0
+margin_right = 312.0
+margin_bottom = -4.0
+placeholder_text = "Paste in match ID"
+
+[node name="BtnRefresh" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 0.8
+anchor_right = 0.5
+anchor_bottom = 0.8
+margin_left = -80.0
+margin_bottom = 40.0
+grow_horizontal = 0
+text = "Refresh"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BtnEditor" type="Button" parent="."]
+anchor_left = 0.75
+anchor_top = 0.6
+anchor_right = 0.75
+anchor_bottom = 0.6
+margin_left = -100.0
+margin_right = 100.0
+margin_bottom = 60.0
+grow_vertical = 2
+text = "Map Editor"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BtnCreate" type="Button" parent="."]
+anchor_left = 0.75
+anchor_top = 0.4
+anchor_right = 0.75
+anchor_bottom = 0.4
+margin_left = -100.0
+margin_top = -100.0
+margin_right = 100.0
+margin_bottom = 104.211
+grow_vertical = 2
+text = "Host a new match"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TxtFilter" type="LineEdit" parent="."]
+anchor_left = 0.21
+anchor_top = 0.8
+anchor_right = 0.21
+anchor_bottom = 0.8
+margin_right = 200.0
+clear_button_enabled = true
+placeholder_text = "Filter for label with Enter"
+caret_blink = true
+__meta__ = {
+"_edit_lock_": true
+}

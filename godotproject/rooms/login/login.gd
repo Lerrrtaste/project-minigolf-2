@@ -29,13 +29,13 @@ func _ready() -> void:
 func _on_LoginBtn_pressed()->void:
 	var promise = nk.authenticate_email(login_email.text, login_password.text)
 	yield(promise,"completed")
-	if game.check_promise(promise):
+	if game.check_promise(promise) && game.nk.authenticated:
 		game.game_state_change_to(game.GameStates.MATCHLIST,{})
 
 func _on_LoginguestBtn_pressed()->void:
 	var promise = nk.authenticate_custom(loginguest_username.text+String(OS.get_ticks_usec()), true, "Guest_"+loginguest_username.text)
 	yield(promise,"completed")
-	if game.check_promise(promise):
+	if game.check_promise(promise) && game.nk.authenticated:
 		game.game_state_change_to(game.GameStates.MATCHLIST,{})
 	#TODO check if duplicate username, then add random number at the end
 
@@ -44,11 +44,11 @@ func _on_RegisterBtn_pressed()->void:
 		game.show_error(-1,"Passwords don't match")
 	var promise = nk.authenticate_email(register_email.text,register_password.text,true,register_username.text)
 	yield(promise,"completed")
-	if game.check_promise(promise):
+	if game.check_promise(promise) && game.nk.authenticated:
 		game.game_state_change_to(game.GameStates.MATCHLIST,{})
 
 func _on_DbgLogin_pressed()->void:
 	var promise = nk.authenticate_custom("DEBUGUSER_"+String(OS.get_unix_time()),true,"DEBUGUSER_"+String(OS.get_unix_time()))
 	yield(promise,"completed")
-	if game.check_promise(promise):
+	if game.check_promise(promise) && game.nk.authenticated:
 		game.game_state_change_to(game.GameStates.MATCHLIST,{})

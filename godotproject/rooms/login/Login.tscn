@@ -6,6 +6,9 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="TabContainer" type="TabContainer" parent="."]
 editor/display_folded = true
@@ -13,14 +16,21 @@ anchor_left = 0.25
 anchor_top = 0.25
 anchor_right = 0.75
 anchor_bottom = 0.75
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Login" type="Tabs" parent="TabContainer"]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 24.0
 margin_right = -4.0
 margin_bottom = -4.0
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="TxtEmail" type="LineEdit" parent="TabContainer/Login"]
 editor/display_folded = true
@@ -31,6 +41,9 @@ anchor_bottom = 0.35
 margin_top = 26.0
 margin_bottom = 26.0
 max_length = 16
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblEmail" type="Label" parent="TabContainer/Login/TxtEmail"]
 grow_vertical = 0
@@ -43,6 +56,9 @@ anchor_top = 0.5
 anchor_right = 0.75
 anchor_bottom = 0.6
 secret = true
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblPassword" type="Label" parent="TabContainer/Login/TxtPassword"]
 grow_vertical = 0
@@ -54,6 +70,9 @@ anchor_top = 0.7
 anchor_right = 0.6
 anchor_bottom = 0.8
 text = "Login"
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LoginGuest" type="Tabs" parent="TabContainer"]
 editor/display_folded = true
@@ -64,6 +83,9 @@ margin_left = 4.0
 margin_top = 24.0
 margin_right = -4.0
 margin_bottom = -4.0
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="TxtGuestUsername" type="LineEdit" parent="TabContainer/LoginGuest"]
 editor/display_folded = true
@@ -74,6 +96,9 @@ anchor_bottom = 0.35
 margin_top = 26.5928
 margin_bottom = 26.5928
 max_length = 16
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblGuestUsername" type="Label" parent="TabContainer/LoginGuest/TxtGuestUsername"]
 grow_vertical = 0
@@ -91,8 +116,12 @@ anchor_top = 0.7
 anchor_right = 0.6
 anchor_bottom = 0.8
 text = "Play as Guest"
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Register" type="Tabs" parent="TabContainer"]
+editor/display_folded = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -100,6 +129,9 @@ margin_left = 4.0
 margin_top = 24.0
 margin_right = -4.0
 margin_bottom = -4.0
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="TxtRegisterUsername" type="LineEdit" parent="TabContainer/Register"]
 editor/display_folded = true
@@ -110,6 +142,9 @@ anchor_bottom = 0.35
 margin_top = -26.0
 margin_bottom = -26.0
 max_length = 16
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblRegisterUsername" type="Label" parent="TabContainer/Register/TxtRegisterUsername"]
 grow_vertical = 0
@@ -124,6 +159,9 @@ anchor_bottom = 0.35
 margin_top = 26.5928
 margin_bottom = 26.5928
 max_length = 16
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblRegisterEmail" type="Label" parent="TabContainer/Register/TxtRegisterEmail"]
 grow_vertical = 0
@@ -136,6 +174,9 @@ anchor_top = 0.5
 anchor_right = 0.75
 anchor_bottom = 0.6
 secret = true
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblRegisterPassword" type="Label" parent="TabContainer/Register/TxtRegisterPassword"]
 grow_vertical = 0
@@ -150,6 +191,9 @@ anchor_bottom = 0.6
 margin_top = 52.0
 margin_bottom = 52.0
 secret = true
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblRegisterPasswordRepeat" type="Label" parent="TabContainer/Register/TxtRegisterPasswordRepeat"]
 grow_vertical = 0
@@ -163,6 +207,9 @@ anchor_bottom = 0.8
 margin_top = 52.0
 margin_bottom = 52.0
 text = "Register"
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LblWhy" type="Label" parent="."]
 anchor_left = 0.8
@@ -187,6 +234,9 @@ Why register placeholder
 Why register placeholder
 Why register placeholder
 Why register placeholder"
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="DbgLogin" type="Button" parent="."]
 visible = false
