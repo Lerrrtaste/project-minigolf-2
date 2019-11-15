@@ -1,4 +1,5 @@
 const tiles = {
+	#0 reserved for erase commands
 	1 : { 	"name" : "gras",
 			"stexpath" : "res://map/tiledata/icons/tiles_placeholder_grass.png",
 			"tresidx" : 1,

@@ -26,6 +26,8 @@ onready var btn_reset_zoom = $Cam/BtnResetZoom
 onready var tmap = $TileMap
 
 const Tile = preload("res://helpers/map_tile/Tile.tscn")
+var tiles:Dictionary # { tmap_coord:vector2: ref:Tile }
+
 const tiledata_script = preload("res://map/tiledata/tile_metadata.gd")
 var tiledata
 
@@ -37,7 +39,7 @@ var selected:Array
 
 var game
 var mapdata:Dictionary
-var mapdata_keys := ["name","creator_id","map_id","cells"]
+var mapdata_keys := ["name","creator_id","map_id","cells","game_version"]
 
 func _ready()->void:
 	game = get_node("/root/Game")
@@ -59,19 +61,16 @@ func mapdata_load(mapdata_load:Dictionary)->void:
 	if !mapdata_load.has_all(mapdata_keys):
 		game.show_error(-1,"Mapdata incomplete! Keys:\n%s"%String(mapdata_load.keys()))
 		return
+	if mapdata_load["game_version"] != game.GAME_VERSION:
+		game.show_error(-1,"Mapdata version incompatible! Map's version: %s\nRunning version: %s"%[mapdata_load["game_version"],game.GAME_VERSION])
+		return
+		
 	mapdata = mapdata_load
 	for p in mapdata["cells"].keys():
 		var tile_id:int = int(mapdata["cells"][p])
-		
-		#set in tmap
 		var xx = int(p.split(',')[0])
 		var yy = int(p.split(',')[1])
-		tmap.set_cell(xx,yy,tiledata.tiles[tile_id]["tresidx"])
-		
-		#create tile node for collision
-		var inst = Tile.instance()
-		inst.initiate(tile_id,tiledata.tiles[tile_id]["collisionlayers"])
-		add_child(inst)
+		_set_tile(Vector2(xx,yy),tiledata.tiles[tile_id]["tresidx"])
 	loaded = true
 
 func editor_set_editing_mode()->void:
@@ -89,10 +88,23 @@ func editor_set_tile(tile_id:int,world_pos:Vector2)->void:
 	#print("Setting tile at pos %s to tileid %s"%[tmap_pos,tile_id])
 	if tile_id == 0: #for erasing
 		mapdata["cells"].erase(String(tmap_pos.x)+","+String(tmap_pos.y))
-		tmap.set_cell(tmap_pos.x,tmap_pos.y,-1)
+		_set_tile(tmap_pos,-1)
 	else:
 		mapdata["cells"][String(tmap_pos.x)+","+String(tmap_pos.y)] = tile_id
-		tmap.set_cell(tmap_pos.x,tmap_pos.y,tiledata.tiles[tile_id]["tresidx"])
+		_set_tile(tmap_pos,tiledata.tiles[tile_id]["tresidx"])
+
+#warning: does not write to mapdata
+func _set_tile(tmap_pos:Vector2,tile_id:int)->void:
+	tmap.set_cell(tmap_pos.x,tmap_pos.y,tile_id)
+	if tiles.has(tmap_pos):
+		tiles[tmap_pos].queue_free()
+		tiles.erase(tmap_pos)
+	if tile_id != -1: #changing to an existing new tile
+		#create tile node for collision
+		var inst = Tile.instance()
+		inst.initiate(tile_id,tiledata.tiles[tile_id]["collisionlayers"])
+		add_child(inst)
+		tiles[tmap_pos] = inst
 
 func editor_make_selected(world_pos:Array)->void:
 	selected = world_pos

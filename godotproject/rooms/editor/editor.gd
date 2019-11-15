@@ -25,10 +25,10 @@ onready var lst_tools = $MapCam/LstTools
 onready var line_tool_preview = $LineToolPreview
 onready var line_tool_area = $LineToolArea
 onready var line_tool_area_shape = $LineToolArea/LineToolAreaShape
-onready var pop_save_dialgue = $MapCam/PopSaveDialoguealogue
-onready var btn_save = $MapCam/BtnSaveSave
-onready var btn_save_confirm = $MapCam/PopSaveDialogue/VBoxContainer/BtnSaveConfirmopSaveDialogue/VBoxContainer/BtnSaveConfirm
-onready var btn_cancel = $MapCam/PopSaveDialogue/VBoxContainer/BtnCancelntainer/BtnCancel
+onready var pop_save_dialgue = $MapCam/PopSaveDialogue
+onready var btn_save = $MapCam/BtnSave
+onready var btn_save_confirm = $MapCam/PopSaveDialogue/VBoxContainer/BtnSaveConfirm
+onready var btn_cancel = $MapCam/PopSaveDialogue/VBoxContainer/BtnCancel
 
 const tiledata_script = preload("res://map/tiledata/tile_metadata.gd")
 var tiledata
@@ -53,12 +53,13 @@ var nkr
 
 func initialize(args:Dictionary)->void:
 	if args["create"]:
+		randomize()
 		var new_mapid = game.user["user"]["id"] + String(OS.get_unix_time()) + String(randi()%999999)
 		var new_mapdata = {	"name": "Untitled map",
 							"creator_id": game.user["user"]["id"],
 							"map_id": new_mapid,
 							"cells": {},
-							"game_versioN": game.GAME_VERSION
+							"game_version": game.GAME_VERSION
 							}
 		map.mapdata_load(new_mapdata)
 	else:

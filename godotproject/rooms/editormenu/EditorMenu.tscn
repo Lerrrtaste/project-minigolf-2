@@ -13,21 +13,157 @@ __meta__ = {
 [node name="LstMaps" type="ItemList" parent="."]
 anchor_left = 0.05
 anchor_top = 0.05
-anchor_right = 0.5
+anchor_right = 0.4
 anchor_bottom = 0.95
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="BtnCreate" type="Button" parent="."]
+[node name="VBoxSelectedMap" type="VBoxContainer" parent="."]
+editor/display_folded = true
 anchor_left = 0.5
-anchor_top = 0.95
-anchor_right = 0.5
-anchor_bottom = 0.95
-margin_top = -114.0
-margin_right = 114.0
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+alignment = 1
+
+[node name="GridMapMetadata" type="GridContainer" parent="VBoxSelectedMap"]
+editor/display_folded = true
+margin_top = 148.0
+margin_right = 409.0
+margin_bottom = 308.0
+columns = 2
+
+[node name="LblMapName" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 5.0
+margin_right = 177.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Name"
+align = 2
+
+[node name="TxtMapName" type="LineEdit" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_right = 409.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="LblMapCreation" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 33.0
+margin_right = 177.0
+margin_bottom = 47.0
+size_flags_horizontal = 3
+text = "Created at"
+align = 2
+
+[node name="TxtMapCreation" type="LineEdit" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_top = 28.0
+margin_right = 409.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="LblMapEdited" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 61.0
+margin_right = 177.0
+margin_bottom = 75.0
+size_flags_horizontal = 3
+text = "Last edited at"
+align = 2
+
+[node name="TxtMapEdited" type="LineEdit" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_top = 56.0
+margin_right = 409.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="LblMapPublic" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 89.0
+margin_right = 177.0
+margin_bottom = 103.0
+size_flags_horizontal = 3
+text = "Public (playable by others)"
+align = 2
+
+[node name="CheckMapPublic" type="CheckBox" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_top = 84.0
+margin_right = 409.0
+margin_bottom = 108.0
+size_flags_horizontal = 3
+
+[node name="LblMapVersion" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 117.0
+margin_right = 177.0
+margin_bottom = 131.0
+size_flags_horizontal = 3
+text = "Game Version"
+align = 2
+
+[node name="TxtMapVersion" type="LineEdit" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_top = 112.0
+margin_right = 409.0
+margin_bottom = 136.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="LblMapActions" type="Label" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_top = 143.0
+margin_right = 177.0
+margin_bottom = 157.0
+size_flags_horizontal = 3
+text = "Actions"
+align = 2
+
+[node name="HBoxButtons" type="HBoxContainer" parent="VBoxSelectedMap/GridMapMetadata"]
+margin_left = 181.0
+margin_top = 140.0
+margin_right = 409.0
+margin_bottom = 160.0
+alignment = 1
+
+[node name="BtnEdit" type="Button" parent="VBoxSelectedMap/GridMapMetadata/HBoxButtons"]
+margin_right = 68.0
+margin_bottom = 20.0
 grow_vertical = 0
+size_flags_vertical = 4
+text = "Edit map"
+
+[node name="BtnSaveChanges" type="Button" parent="VBoxSelectedMap/GridMapMetadata/HBoxButtons"]
+margin_left = 72.0
+margin_right = 169.0
+margin_bottom = 20.0
+grow_vertical = 0
+size_flags_horizontal = 4
+text = "Save changes"
+
+[node name="BtnDelete" type="Button" parent="VBoxSelectedMap/GridMapMetadata/HBoxButtons"]
+margin_left = 173.0
+margin_right = 228.0
+margin_bottom = 20.0
+grow_vertical = 0
+size_flags_horizontal = 4
+text = "Delete"
+
+[node name="BtnCreate" type="Button" parent="VBoxSelectedMap"]
+margin_left = 295.0
+margin_top = 312.0
+margin_right = 409.0
+margin_bottom = 332.0
+grow_vertical = 0
+size_flags_horizontal = 8
 text = "Create new Map"
-__meta__ = {
-"_edit_lock_": true
-}
+
+[node name="PopDeletion" type="ConfirmationDialog" parent="."]
+visible = true
+margin_right = 200.0
+margin_bottom = 70.0
+popup_exclusive = true
+window_title = "Confirm map deletion"
+[connection signal="pressed" from="VBoxSelectedMap/GridMapMetadata/HBoxButtons/BtnEdit" to="." method="_on_BtnEdit_pressed"]
+[connection signal="pressed" from="VBoxSelectedMap/GridMapMetadata/HBoxButtons/BtnSaveChanges" to="." method="_on_BtnSaveChanges_pressed"]
+[connection signal="pressed" from="VBoxSelectedMap/GridMapMetadata/HBoxButtons/BtnDelete" to="." method="_on_BtnDelete_pressed"]
