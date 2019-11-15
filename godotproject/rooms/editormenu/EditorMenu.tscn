@@ -159,7 +159,6 @@ size_flags_horizontal = 8
 text = "Create new Map"
 
 [node name="PopDeletion" type="ConfirmationDialog" parent="."]
-visible = true
 margin_right = 200.0
 margin_bottom = 70.0
 popup_exclusive = true

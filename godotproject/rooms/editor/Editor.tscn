@@ -31,16 +31,15 @@ margin_top = 41.0
 margin_right = 104.0
 margin_bottom = 152.0
 
-[node name="BtnSave" type="Button" parent="MapCam"]
+[node name="BtnMenu" type="Button" parent="MapCam"]
 margin_left = 18.8622
 margin_top = 12.0033
 margin_right = 91.8622
 margin_bottom = 32.0033
-text = "Save map"
+text = "Menu"
 
 [node name="PopSaveDialogue" type="PopupPanel" parent="MapCam"]
 editor/display_folded = true
-visible = true
 margin_left = 257.0
 margin_top = 94.0
 margin_right = 520.0
@@ -48,6 +47,7 @@ margin_bottom = 269.0
 popup_exclusive = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MapCam/PopSaveDialogue"]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -57,22 +57,41 @@ margin_bottom = -4.0
 alignment = 1
 
 [node name="LblSave" type="Label" parent="MapCam/PopSaveDialogue/VBoxContainer"]
-margin_top = 52.0
+margin_top = 28.0
+margin_right = 255.0
+margin_bottom = 42.0
+text = "You have the choice:"
+
+[node name="BtnSave" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+margin_top = 46.0
 margin_right = 255.0
 margin_bottom = 66.0
-text = "Save this map and override old version?"
+text = "Save this map"
 
-[node name="BtnSaveConfirm" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+[node name="BtnSaveLeave" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
 margin_top = 70.0
 margin_right = 255.0
 margin_bottom = 90.0
-text = "Confirm"
+text = "Save & Leave"
 
-[node name="BtnCancel" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+[node name="BtnLeave" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
 margin_top = 94.0
 margin_right = 255.0
 margin_bottom = 114.0
+text = "Just leave (Discarding changes!!!)"
+
+[node name="BtnCancel" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+margin_top = 118.0
+margin_right = 255.0
+margin_bottom = 138.0
 text = "Keep editing"
+
+[node name="PopLeave" type="ConfirmationDialog" parent="MapCam"]
+margin_right = 200.0
+margin_bottom = 70.0
+popup_exclusive = true
+window_title = "Leave without saving?"
+dialog_text = "All changes will be lost and this is irreversable!"
 
 [node name="LineToolPreview" type="Line2D" parent="."]
 width = 5.0

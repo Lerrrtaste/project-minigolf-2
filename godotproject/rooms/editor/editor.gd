@@ -26,8 +26,11 @@ onready var line_tool_preview = $LineToolPreview
 onready var line_tool_area = $LineToolArea
 onready var line_tool_area_shape = $LineToolArea/LineToolAreaShape
 onready var pop_save_dialgue = $MapCam/PopSaveDialogue
-onready var btn_save = $MapCam/BtnSave
-onready var btn_save_confirm = $MapCam/PopSaveDialogue/VBoxContainer/BtnSaveConfirm
+onready var pop_leave = $MapCam/PopLeave
+onready var btn_menu = $MapCam/BtnMenu
+onready var btn_save = $MapCam/PopSaveDialogue/VBoxContainer/BtnSave
+onready var btn_save_leave = $MapCam/PopSaveDialogue/VBoxContainer/BtnSaveLeave
+onready var btn_leave = $MapCam/PopSaveDialogue/VBoxContainer/BtnLeave
 onready var btn_cancel = $MapCam/PopSaveDialogue/VBoxContainer/BtnCancel
 
 const tiledata_script = preload("res://map/tiledata/tile_metadata.gd")
@@ -73,9 +76,12 @@ func _ready() -> void:
 	lst_tiles.connect("item_selected",self,"_on_LstTiles_item_selected")
 	lst_tiles.connect("nothing_selected",self,"_on_LstTiles_nothing_selected")
 	lst_tools.connect("item_selected",self,"_on_LstTools_item_selected")
-	btn_save.connect("pressed",self,"_on_BtnSave_pressed")
+	btn_menu.connect("pressed",self,"_on_BtnMenu_pressed")
 	btn_cancel.connect("pressed",self,"_on_BtnCancel_pressed")
-	btn_save_confirm.connect("pressed",self,"_on_BtnSaveConfirm_pressed")
+	btn_save.connect("pressed",self,"_on_BtnSave_pressed")
+	btn_save_leave.connect("pressed",self,"_on_BtnSaveLeave_pressed")
+	btn_leave.connect("pressed",self,"_on_BtnLeave_pressed")
+	pop_leave.connect("confirmed",self,"_on_PopLeave_confirmed")
 	
 	tiledata = tiledata_script.new()
 	map.editor_set_editing_mode()
@@ -149,10 +155,7 @@ func _line_complete(end_pos:Vector2)->void:
 		return
 	print(line_tool_area.get_overlapping_areas())
 
-func _on_BtnSave_pressed()->void:
-	pop_save_dialgue.popup_centered()
-
-func _on_BtnSaveConfirm_pressed()->void:
+func _save()->bool:
 	var export_mapdata:String = map.mapdata_export()
 	if export_mapdata == "": #mapdata couldnt be exported, map displayed the error
 		return 
@@ -162,8 +165,24 @@ func _on_BtnSaveConfirm_pressed()->void:
 					}
 	var promise = nk.write_storage_objects([save_obj])
 	yield(promise,"completed")
-	if game.check_promise(promise):
+	return game.check_promise(promise)
+
+func _on_BtnMenu_pressed()->void:
+	pop_save_dialgue.popup_centered()
+
+func _on_BtnSave_pressed()->void:
+	_save()
+	pop_save_dialgue.hide()
+
+func _on_BtnSaveLeave_pressed()->void:
+	if _save():
 		game.game_state_change_to(game.GameStates.EDITORMENU)
+
+func _on_BtnLeave_pressed()->void:
+	pop_leave.popup_centered()
+
+func _on_PopLeave_confirmed()->void:
+	game.game_state_change_to(game.GameStates.EDITORMENU)
 
 func _on_BtnCancel_pressed()->void:
 	pop_save_dialgue.hide()

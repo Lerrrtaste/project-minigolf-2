@@ -59,10 +59,12 @@ func mapdata_export()->String:
 
 func mapdata_load(mapdata_load:Dictionary)->void:
 	if !mapdata_load.has_all(mapdata_keys):
-		game.show_error(-1,"Mapdata incomplete! Keys:\n%s"%String(mapdata_load.keys()))
+		game.show_error(-1,"Mapdata incomplete!\n\nKeys:\n%s"%String(mapdata_load.keys()))
+		game.game_state_change_to(game.GameStates.EDITORMENU)
 		return
 	if mapdata_load["game_version"] != game.GAME_VERSION:
-		game.show_error(-1,"Mapdata version incompatible! Map's version: %s\nRunning version: %s"%[mapdata_load["game_version"],game.GAME_VERSION])
+		game.show_error(-1,"Mapdata version incompatible!\nMap's version: %s\nRunning version: %s"%[mapdata_load["game_version"],game.GAME_VERSION])
+		game.game_state_change_to(game.GameStates.EDITORMENU)
 		return
 		
 	mapdata = mapdata_load
