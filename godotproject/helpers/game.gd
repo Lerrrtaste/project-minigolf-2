@@ -1,5 +1,9 @@
 extends Node
+"""
+Master (pseudo root) scene
 
+
+"""
 #general
 var room:Node
 var nk
@@ -91,9 +95,9 @@ func game_state_change_to(new_state:int,args:Dictionary = {})->void:
 		if room != null:
 			room.queue_free()
 		room = load(GameStateScenesPath[new_state]).instance()
+		add_child(room)
 		if room.has_method("initialize"):
 			room.initialize(args)
-		add_child(room)
 	game_state = new_state
 	_game_state_changed(args)
 

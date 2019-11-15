@@ -1,23 +1,41 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://rooms/editor/editor.gd" type="Script" id=1]
 [ext_resource path="res://map/Map.tscn" type="PackedScene" id=2]
 [ext_resource path="res://helpers/map_camera/MapCam.tscn" type="PackedScene" id=3]
 
+[sub_resource type="SegmentShape2D" id=1]
+
 [node name="Editor" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="Map" parent="." instance=ExtResource( 2 )]
 
 [node name="MapCam" parent="." instance=ExtResource( 3 )]
+editor/display_folded = true
 
 [node name="LstTiles" type="ItemList" parent="MapCam"]
 margin_left = 15.173
 margin_top = 290.307
 margin_right = 131.173
 margin_bottom = 580.307
+
+[node name="LstTools" type="ItemList" parent="MapCam"]
+margin_left = 15.0
+margin_top = 41.0
+margin_right = 104.0
+margin_bottom = 152.0
+
+[node name="LineToolPreview" type="Line2D" parent="."]
+width = 5.0
+default_color = Color( 1, 0, 0, 1 )
+texture_mode = 774907954
+
+[node name="LineToolArea" type="Area2D" parent="."]
+monitorable = false
+
+[node name="LineToolAreaShape" type="CollisionShape2D" parent="LineToolArea"]
+shape = SubResource( 1 )

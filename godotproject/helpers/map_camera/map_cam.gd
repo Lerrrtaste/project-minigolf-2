@@ -1,4 +1,12 @@
 extends Camera2D
+"""
+Camera with dragging and zooming to be used when viewing a map
+
+
+If target is not null the camera will follow the target.global_position
+
+TODO add margin when following + smoothing
+"""
 
 var dragable := true
 var zoomable := true
