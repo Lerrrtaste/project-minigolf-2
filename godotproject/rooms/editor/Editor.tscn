@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://rooms/editor/editor.gd" type="Script" id=1]
+[ext_resource path="res://helpers/map/tiledata/maptiles_tileset.tres" type="TileSet" id=2]
+
+[node name="Editor" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="LstTiles" type="ItemList" parent="."]
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = 658.291
+margin_top = 466.551
+margin_right = 366.291
+margin_bottom = -38.4487
+
+[node name="MapBg" type="Panel" parent="."]
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_vertical = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TmapMap" type="TileMap" parent="MapBg"]
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 10, 10 )
+format = 1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TxtMapSize" type="LineEdit" parent="."]
+margin_left = 556.4
+margin_top = 10.0
+margin_right = 614.4
+margin_bottom = 34.0
+grow_horizontal = 0

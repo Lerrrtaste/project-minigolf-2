@@ -4,10 +4,7 @@ extends Node
 var NakamaRealtimeClient = preload("res://addons/nakama-client/NakamaRealtimeClient.gd")
 var NakamaPromise = preload("res://addons/nakama-client/NakamaPromise.gd")
 
-var nkr
-var match_id := ""
-
-export (String) var host = "192.168.0.234"
+export (String) var host = "127.0.0.1"
 export (int) var port = 7350
 export (String) var server_key = "defaultkey"
 export (bool) var use_ssl = false
@@ -173,8 +170,27 @@ func create_realtime_client(create_status : bool = false):
 	var rtclient = NakamaRealtimeClient.new()
 	rtclient.debugging = debugging
 	rtclient.connect_to_url(url)
-	nkr = rtclient
 	return rtclient
+
+#
+# MANUALLY GENERATED
+#
+
+signal rpc_func_completed (response, request)
+
+# Execute a Lua function on the server.
+func rpc_func(id: String, payload: Dictionary):
+	var request = {
+		method = HTTPClient.METHOD_POST,
+		path = 'v2/rpc/' + id,
+		data = {},
+		name = 'rpc_func',
+	}
+	
+	# Nakama wants the payload double JSON encoded, so we did it manually.
+	request['data'] = JSON.print(payload)
+	
+	return _queue_request(request)
 
 #
 # AUTOMATICALLY GENERATED:
@@ -644,15 +660,15 @@ func read_storage_objects(object_ids: Array):
 signal list_storage_objects_completed (response, request)
 
 # List publicly readable storage objects in a given collection.
-func list_storage_objects(collection: String, user_id: String = "null", limit: int = 100, cursor: String = ''):
+func list_storage_objects(collection: String, user_id: String, limit: int = 100, cursor: String = ''):
 	var request = {
 		method = HTTPClient.METHOD_GET,
 		path = 'v2/storage/' + collection,
 		query_string = {},
 		name = 'list_storage_objects',
 	}
-	if user_id != "null":
-		request['query_string']['user_id'] = user_id
+	
+	request['query_string']['user_id'] = user_id
 	if limit != 100:
 		request['query_string']['limit'] = limit
 	if cursor != '':
@@ -1098,7 +1114,7 @@ func write_tournament_record(tournament_id: String, score: int, subscore: int, m
 signal list_matches_completed (response, request)
 
 # Fetch list of running matches.
-func list_matches(limit: int, authoritative: bool=false, label: String ="", min_size: int=-1, max_size: int=-1, query: String=""):
+func list_matches(limit: int, authoritative: bool, label: String, min_size: int, max_size: int, query: String):
 	var request = {
 		method = HTTPClient.METHOD_GET,
 		path = 'v2/match',
@@ -1114,5 +1130,3 @@ func list_matches(limit: int, authoritative: bool=false, label: String ="", min_
 #	request['query_string']['query'] = query
 	
 	return _queue_request(request)
-
-

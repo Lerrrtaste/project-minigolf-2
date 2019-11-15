@@ -47,7 +47,7 @@ func send(data : Dictionary, callback_object = null, callback_method : String = 
 		return promise
 	
 	if debugging:
-		print ("\nNAKAMA REALTIME SENT:")
+		print ("NAKAMA REALTIME SENT:")
 		print (JSON.print(data))
 	
 	# Register a callback for this message.
@@ -59,9 +59,12 @@ func send(data : Dictionary, callback_object = null, callback_method : String = 
 	if data.has('match_data_send'):
 		data['match_data_send']['data'] = Marshalls.utf8_to_base64(data['match_data_send']['data'])
 		data['match_data_send']['op_code'] = str(data['match_data_send']['op_code'])
+	if data.has('rpc') and data['rpc'].has('payload'):
+		# Nakama wants the payload data double encoded.
+		data['rpc']['payload'] = JSON.print(data['rpc']['payload'])
 	
 	var serialized_data = JSON.print(data)
-
+	
 	var error = socket.get_peer(1).put_packet(serialized_data.to_utf8())
 	if error != OK:
 		promise.complete({}, error)

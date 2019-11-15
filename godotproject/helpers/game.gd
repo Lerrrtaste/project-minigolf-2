@@ -32,7 +32,8 @@ const GameStateScenesPath = {
 	GameStates.LOGIN : "res://rooms/login/Login.tscn",
 	GameStates.MATCHLIST : "res://rooms/matchlist/Matchlist.tscn",
 	GameStates.LOBBY : "res://rooms/lobby/Lobby.tscn",
-	GameStates.EDITORMENU : "res://rooms/editor/EditorMenu.tscn"
+	GameStates.EDITORMENU : "res://rooms/editormenu/EditorMenu.tscn",
+	GameStates.EDITOR : "res://rooms/editor/Editor.tscn"
 }
 
 var game_state = GameStates.INVALID

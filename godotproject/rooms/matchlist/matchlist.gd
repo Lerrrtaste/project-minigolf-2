@@ -88,7 +88,7 @@ func _on_BtnJoinId_pressed()->void:
 
 func _on_BtnRefresh_pressed()->void:
 	_disable_buttons(true)
-	var promise = nk.list_matches(100)
+	var promise = nk.list_matches(100,false,"",0,0,"")
 	yield(promise,"completed")
 	if !game.check_promise(promise):
 		return

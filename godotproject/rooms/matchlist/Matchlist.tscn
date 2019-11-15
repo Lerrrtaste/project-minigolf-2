@@ -98,11 +98,13 @@ __meta__ = {
 }
 
 [node name="TxtFilter" type="LineEdit" parent="."]
+visible = false
 anchor_left = 0.21
 anchor_top = 0.8
 anchor_right = 0.21
 anchor_bottom = 0.8
 margin_right = 200.0
+context_menu_enabled = false
 clear_button_enabled = true
 placeholder_text = "Filter for label with Enter"
 caret_blink = true
