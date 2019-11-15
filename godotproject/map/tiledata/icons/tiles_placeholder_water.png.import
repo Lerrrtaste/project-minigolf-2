@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/maptiles_placeholder.png-196461d7657d590b08ef820995513a7b.stex"
+path="res://.import/tiles_placeholder_water.png-aaa19c7f069970f2af29b2e67e25e30e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://helpers/map/tiledata/maptiles_placeholder.png"
-dest_files=[ "res://.import/maptiles_placeholder.png-196461d7657d590b08ef820995513a7b.stex" ]
+source_file="res://map/tiledata/icons/tiles_placeholder_water.png"
+dest_files=[ "res://.import/tiles_placeholder_water.png-aaa19c7f069970f2af29b2e67e25e30e.stex" ]
 
 [params]
 

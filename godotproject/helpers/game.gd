@@ -133,4 +133,6 @@ static func get_game_state_name(state:int)->String:
 		30: return "Matchlist"
 		40: return "Lobby"
 		50: return "Playing"
-		_: return "Unkown Game State: %s"%state
+		60: return "EditorMenu"
+		70: return "Editor"
+		_: return "UnkownGameState: %s"%state
