@@ -11,7 +11,6 @@ __meta__ = {
 }
 
 [node name="TabContainer" type="TabContainer" parent="."]
-editor/display_folded = true
 anchor_left = 0.25
 anchor_top = 0.25
 anchor_right = 0.75
@@ -21,11 +20,10 @@ __meta__ = {
 }
 
 [node name="Login" type="Tabs" parent="TabContainer"]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 24.0
+margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 __meta__ = {
@@ -40,6 +38,7 @@ anchor_right = 0.75
 anchor_bottom = 0.35
 margin_top = 26.0
 margin_bottom = 26.0
+text = "lf2002@gmx.de"
 max_length = 16
 __meta__ = {
 "_edit_lock_": true
@@ -55,6 +54,7 @@ anchor_left = 0.25
 anchor_top = 0.5
 anchor_right = 0.75
 anchor_bottom = 0.6
+text = "Passw0rd"
 secret = true
 __meta__ = {
 "_edit_lock_": true
@@ -80,7 +80,7 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 24.0
+margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 __meta__ = {
@@ -126,7 +126,7 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 24.0
+margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 __meta__ = {

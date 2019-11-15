@@ -14,12 +14,13 @@ const NakamaRestClient = preload("res://addons/nakama-client/NakamaRestClient.gd
 
 #user/nakama
 var username:String
-var user_id:String
+var user:Dictionary
 
 #server settings
 const HOST:String = "192.168.0.234"
 const PORT:int = 7350
 const KEY:String = "defaultkey"
+const GAME_VERSION = 1
 
 #game state
 enum GameStates {
@@ -101,6 +102,13 @@ func game_state_change_to(new_state:int,args:Dictionary = {})->void:
 	game_state = new_state
 	_game_state_changed(args)
 
+func _fetch_user_data()->void:
+	var promise = nk.get_account()
+	yield(promise,"completed")
+	if !check_promise(promise):
+		return
+	user = promise.response["data"]
+
 func _work_error_queue()->void:
 	var error = error_queue.pop_front()
 	var code = error[0]
@@ -118,8 +126,8 @@ func _work_error_queue()->void:
 
 func _game_state_changed(args:Dictionary)->void:
 	match game_state:
-		GameStates.LOGIN:
-			pass
+		GameStates.MATCHLIST:
+			_fetch_user_data()
 
 func get_nakama_rest_client()->Object:
 	return nk

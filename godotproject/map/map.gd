@@ -17,13 +17,15 @@ Mapdata dict (stored in mapdata_keys for error checking):
 name:String
 creator_id:String
 map_id:String
-cell_ids:Dictionary -> { tmap_coord:Vector2 : tile_id:int }
+cells:Dictionary -> { tmap_coord:String (x,y) : tile_id:int }
+game_version:int
 """
 
 onready var map_camera = $MapCam
 onready var btn_reset_zoom = $Cam/BtnResetZoom
 onready var tmap = $TileMap
 
+const Tile = preload("res://helpers/map_tile/Tile.tscn")
 const tiledata_script = preload("res://map/tiledata/tile_metadata.gd")
 var tiledata
 
@@ -35,7 +37,7 @@ var selected:Array
 
 var game
 var mapdata:Dictionary
-var mapdata_keys := ["name","creator_id","map_id","cell_ids"]
+var mapdata_keys := ["name","creator_id","map_id","cells"]
 
 func _ready()->void:
 	game = get_node("/root/Game")
@@ -55,9 +57,21 @@ func mapdata_export()->String:
 
 func mapdata_load(mapdata_load:Dictionary)->void:
 	if !mapdata_load.has_all(mapdata_keys):
-		game.show_error(-1,"Mapdata incomplete! Keys:\n%s"%mapdata_load.keys())
+		game.show_error(-1,"Mapdata incomplete! Keys:\n%s"%String(mapdata_load.keys()))
 		return
 	mapdata = mapdata_load
+	for p in mapdata["cells"].keys():
+		var tile_id:int = int(mapdata["cells"][p])
+		
+		#set in tmap
+		var xx = int(p.split(',')[0])
+		var yy = int(p.split(',')[1])
+		tmap.set_cell(xx,yy,tiledata.tiles[tile_id]["tresidx"])
+		
+		#create tile node for collision
+		var inst = Tile.instance()
+		inst.initiate(tile_id,tiledata.tiles[tile_id]["collisionlayers"])
+		add_child(inst)
 	loaded = true
 
 func editor_set_editing_mode()->void:
@@ -74,10 +88,10 @@ func editor_set_tile(tile_id:int,world_pos:Vector2)->void:
 	var tmap_pos = tmap.world_to_map(world_pos)
 	#print("Setting tile at pos %s to tileid %s"%[tmap_pos,tile_id])
 	if tile_id == 0: #for erasing
-		mapdata["cell_ids"].erase(tmap_pos)
+		mapdata["cells"].erase(String(tmap_pos.x)+","+String(tmap_pos.y))
 		tmap.set_cell(tmap_pos.x,tmap_pos.y,-1)
 	else:
-		mapdata["cell_ids"][tmap_pos] = tile_id
+		mapdata["cells"][String(tmap_pos.x)+","+String(tmap_pos.y)] = tile_id
 		tmap.set_cell(tmap_pos.x,tmap_pos.y,tiledata.tiles[tile_id]["tresidx"])
 
 func editor_make_selected(world_pos:Array)->void:

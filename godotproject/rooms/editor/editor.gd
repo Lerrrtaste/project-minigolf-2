@@ -19,12 +19,16 @@ Tools
 """
 
 onready var map_camera = $MapCam
-onready var map = $Map
+onready var map = $MapContainer
 onready var lst_tiles = $MapCam/LstTiles
 onready var lst_tools = $MapCam/LstTools
 onready var line_tool_preview = $LineToolPreview
 onready var line_tool_area = $LineToolArea
 onready var line_tool_area_shape = $LineToolArea/LineToolAreaShape
+onready var pop_save_dialgue = $MapCam/PopSaveDialoguealogue
+onready var btn_save = $MapCam/BtnSaveSave
+onready var btn_save_confirm = $MapCam/PopSaveDialogue/VBoxContainer/BtnSaveConfirmopSaveDialogue/VBoxContainer/BtnSaveConfirm
+onready var btn_cancel = $MapCam/PopSaveDialogue/VBoxContainer/BtnCancelntainer/BtnCancel
 
 const tiledata_script = preload("res://map/tiledata/tile_metadata.gd")
 var tiledata
@@ -49,19 +53,16 @@ var nkr
 
 func initialize(args:Dictionary)->void:
 	if args["create"]:
-		var new_mapid = game.user_id + String(OS.get_unix_time()) + String(randi()%999999)
+		var new_mapid = game.user["user"]["id"] + String(OS.get_unix_time()) + String(randi()%999999)
 		var new_mapdata = {	"name": "Untitled map",
-							"creator_id": game.user_id,
+							"creator_id": game.user["user"]["id"],
 							"map_id": new_mapid,
-							"cell_ids": {}
+							"cells": {},
+							"game_versioN": game.GAME_VERSION
 							}
 		map.mapdata_load(new_mapdata)
 	else:
-		var parse_result = JSON.parse(args["mapdata"])
-		if parse_result.error != OK:
-			game.show_error(-1,"Map data corrupt. Cant load! Parse error:\n%s\nat line: %s"%[parse_result.error_string,parse_result.error_line])
-			return#game.game_state_change_to(game.GameStates.EDITORMENU)
-		map.mapdata_load(parse_result.result)
+		map.mapdata_load(args["mapdata"])
 
 func _ready() -> void:
 	game = get_node("/root/Game")
@@ -71,6 +72,9 @@ func _ready() -> void:
 	lst_tiles.connect("item_selected",self,"_on_LstTiles_item_selected")
 	lst_tiles.connect("nothing_selected",self,"_on_LstTiles_nothing_selected")
 	lst_tools.connect("item_selected",self,"_on_LstTools_item_selected")
+	btn_save.connect("pressed",self,"_on_BtnSave_pressed")
+	btn_cancel.connect("pressed",self,"_on_BtnCancel_pressed")
+	btn_save_confirm.connect("pressed",self,"_on_BtnSaveConfirm_pressed")
 	
 	tiledata = tiledata_script.new()
 	map.editor_set_editing_mode()
@@ -115,15 +119,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseMotion:
 		tool_pos = event.global_position
-#		if tool_selected == Tools.LINE:
-#			var line = tool_pos-line_start
-#			var line_length = sqrt(line.length_squared())
-#			var selected:Array
-#			for step in range(0,line_length):
-#				selected.append(line_start+(line*(step/line_length))+map_camera.position)
-#			map.editor_make_selected(selected)
-#		else:
-#			map.editor_make_selected([event.global_position+ map_camera.position])
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("editor_unselect"):
@@ -152,6 +147,25 @@ func _line_complete(end_pos:Vector2)->void:
 	if tile_selected == -1:
 		return
 	print(line_tool_area.get_overlapping_areas())
+
+func _on_BtnSave_pressed()->void:
+	pop_save_dialgue.popup_centered()
+
+func _on_BtnSaveConfirm_pressed()->void:
+	var export_mapdata:String = map.mapdata_export()
+	if export_mapdata == "": #mapdata couldnt be exported, map displayed the error
+		return 
+	var save_obj = {"collection" : "maps",
+					"key" : map.mapdata["map_id"],
+					"value" : export_mapdata
+					}
+	var promise = nk.write_storage_objects([save_obj])
+	yield(promise,"completed")
+	if game.check_promise(promise):
+		game.game_state_change_to(game.GameStates.EDITORMENU)
+
+func _on_BtnCancel_pressed()->void:
+	pop_save_dialgue.hide()
 
 func _on_LstTools_item_selected(idx:int)->void:
 	tool_selected = lst_tools.get_item_metadata(idx)

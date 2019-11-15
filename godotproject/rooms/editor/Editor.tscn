@@ -11,11 +11,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
-[node name="Map" parent="." instance=ExtResource( 2 )]
+[node name="MapContainer" parent="." instance=ExtResource( 2 )]
 
 [node name="MapCam" parent="." instance=ExtResource( 3 )]
-editor/display_folded = true
 
 [node name="LstTiles" type="ItemList" parent="MapCam"]
 margin_left = 15.173
@@ -28,6 +30,49 @@ margin_left = 15.0
 margin_top = 41.0
 margin_right = 104.0
 margin_bottom = 152.0
+
+[node name="BtnSave" type="Button" parent="MapCam"]
+margin_left = 18.8622
+margin_top = 12.0033
+margin_right = 91.8622
+margin_bottom = 32.0033
+text = "Save map"
+
+[node name="PopSaveDialogue" type="PopupPanel" parent="MapCam"]
+editor/display_folded = true
+visible = true
+margin_left = 257.0
+margin_top = 94.0
+margin_right = 520.0
+margin_bottom = 269.0
+popup_exclusive = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MapCam/PopSaveDialogue"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+alignment = 1
+
+[node name="LblSave" type="Label" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+margin_top = 52.0
+margin_right = 255.0
+margin_bottom = 66.0
+text = "Save this map and override old version?"
+
+[node name="BtnSaveConfirm" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+margin_top = 70.0
+margin_right = 255.0
+margin_bottom = 90.0
+text = "Confirm"
+
+[node name="BtnCancel" type="Button" parent="MapCam/PopSaveDialogue/VBoxContainer"]
+margin_top = 94.0
+margin_right = 255.0
+margin_bottom = 114.0
+text = "Keep editing"
 
 [node name="LineToolPreview" type="Line2D" parent="."]
 width = 5.0
