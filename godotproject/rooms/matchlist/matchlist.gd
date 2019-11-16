@@ -117,8 +117,5 @@ func _on_BtnCreate_pressed()->void:
 func _on_LstMatches_item_selected(idx:int)->void:
 	btn_join_selected.disabled = false
 
-#func _on_LstMatches_nothing_selected()->void:
-#	btn_join_selected.disabled = true
-
 func _on_TxtFilter_text_entered(new_text:String)->void:
 	_matchlist_update()

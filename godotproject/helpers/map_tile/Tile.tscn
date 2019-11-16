@@ -6,7 +6,6 @@
 extents = Vector2( 16, 16 )
 
 [node name="Tile" type="Area2D"]
-visible = false
 light_mask = 0
 monitoring = false
 collision_layer = 0

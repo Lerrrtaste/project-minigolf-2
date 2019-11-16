@@ -47,12 +47,23 @@ func _ready()->void:
 	var game = get_node("/root/Game")
 	map_camera.make_current()
 
-func _draw()->void:
-	for pos in selected:
-		var tmap_pos = tmap.world_to_map(pos)
-		draw_rect(Rect2(tmap_pos,Vector2(32,32)),ColorN("red"),true)
+func _process(delta: float) -> void:
+	update() #TODO remove
 
+func _draw()->void:
+	#map border
+	var t = tmap.get_used_rect()
+	var rect = Rect2((t.position.x*32)-8,(t.position.y*32)-8,(t.size.x*32)+16,(t.size.y*32)+16)
+	draw_rect(rect,ColorN("red"),true)
+	
+	#selected
+	for i in selected:
+		draw_rect(Rect2(i.position,Vector2(32,32)),ColorN("red"),true)
+
+
+#loading / saving
 func mapdata_export()->String:
+	#TODO use get_used_cells here instead of writing to mapdata when setting a tile
 	if !mapdata.has_all(mapdata_keys):
 		game.show_error(-1,"Warning! Exporting incomplete Mapdata! Keys:\n%s"%mapdata.keys())
 	return JSON.print(mapdata)
@@ -75,6 +86,8 @@ func mapdata_load(mapdata_load:Dictionary)->void:
 		_set_tile(Vector2(xx,yy),tiledata.tiles[tile_id]["tresidx"])
 	loaded = true
 
+
+#functions to be called by the editor
 func editor_set_editing_mode()->void:
 	editing_mode = true
 	remove_child(map_camera)
@@ -95,8 +108,13 @@ func editor_set_tile(tile_id:int,world_pos:Vector2)->void:
 		mapdata["cells"][String(tmap_pos.x)+","+String(tmap_pos.y)] = tile_id
 		_set_tile(tmap_pos,tiledata.tiles[tile_id]["tresidx"])
 
-#warning: does not write to mapdata
+func editor_make_selected(tiles:Array)->void:
+	selected = tiles
+	update()
+
+
 func _set_tile(tmap_pos:Vector2,tile_id:int)->void:
+	#warning: does not write to mapdata
 	tmap.set_cell(tmap_pos.x,tmap_pos.y,tile_id)
 	if tiles.has(tmap_pos):
 		tiles[tmap_pos].queue_free()
@@ -107,7 +125,3 @@ func _set_tile(tmap_pos:Vector2,tile_id:int)->void:
 		inst.initiate(tile_id,tiledata.tiles[tile_id]["collisionlayers"])
 		add_child(inst)
 		tiles[tmap_pos] = inst
-
-func editor_make_selected(world_pos:Array)->void:
-	selected = world_pos
-	update()

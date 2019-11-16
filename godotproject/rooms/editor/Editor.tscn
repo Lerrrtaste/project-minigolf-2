@@ -5,6 +5,8 @@
 [ext_resource path="res://helpers/map_camera/MapCam.tscn" type="PackedScene" id=3]
 
 [sub_resource type="SegmentShape2D" id=1]
+a = Vector2( -100, -100 )
+b = Vector2( -100, -100 )
 
 [node name="Editor" type="Control"]
 anchor_right = 1.0
@@ -26,6 +28,7 @@ margin_right = 131.173
 margin_bottom = 580.307
 
 [node name="LstTools" type="ItemList" parent="MapCam"]
+visible = false
 margin_left = 15.0
 margin_top = 41.0
 margin_right = 104.0
@@ -93,6 +96,12 @@ popup_exclusive = true
 window_title = "Leave without saving?"
 dialog_text = "All changes will be lost and this is irreversable!"
 
+[node name="LblMetadata" type="Label" parent="MapCam"]
+margin_left = 18.093
+margin_top = 49.1094
+margin_right = 117.093
+margin_bottom = 115.109
+
 [node name="LineToolPreview" type="Line2D" parent="."]
 width = 5.0
 default_color = Color( 1, 0, 0, 1 )
@@ -100,6 +109,8 @@ texture_mode = 774907954
 
 [node name="LineToolArea" type="Area2D" parent="."]
 monitorable = false
+collision_layer = 0
+collision_mask = 512
 
 [node name="LineToolAreaShape" type="CollisionShape2D" parent="LineToolArea"]
 shape = SubResource( 1 )

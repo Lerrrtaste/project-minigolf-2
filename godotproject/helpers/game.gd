@@ -135,6 +135,7 @@ func get_nakama_rest_client()->Object:
 func get_nakama_rt_client()->Object:
 	if nkr == null:
 		nkr = nk.create_realtime_client(true)
+		nkr.connect("error",self,"_on_Nkr_error")
 	return nkr
 
 static func get_game_state_name(state:int)->String:
@@ -148,3 +149,6 @@ static func get_game_state_name(state:int)->String:
 		60: return "EditorMenu"
 		70: return "Editor"
 		_: return "UnkownGameState: %s"%state
+
+func _on_Nkr_error(data:Dictionary)->void:
+	show_error(-1,"Realtime error:\n%s"%data)

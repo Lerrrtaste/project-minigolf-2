@@ -19,6 +19,7 @@ onready var check_map_public = $VBoxSelectedMap/GridMapMetadata/CheckMapPublic
 onready var txt_map_version = $VBoxSelectedMap/GridMapMetadata/TxtMapVersion
 onready var grid_map_metadata = $VBoxSelectedMap/GridMapMetadata
 onready var pop_deletion = $PopDeletion
+onready var btn_exit = $VBoxSelectedMap/BtnExit
 
 var game
 var nk
@@ -33,6 +34,7 @@ func _ready() -> void:
 	btn_create.connect("pressed",self,"_on_BtnCreate_pressed")
 	lst_maps.connect("item_activated",self,"_on_LstMaps_item_activated")
 	pop_deletion.connect("confirmed",self,"_on_PopDeletion_confirmed")
+	btn_exit.connect("pressed",self,"_on_BtnExit_pressed")
 	update_map_list()
 
 func update_map_list()->void:
@@ -54,6 +56,9 @@ func update_map_list()->void:
 		var list_title = "%s"%o["mapdata"]["name"]
 		lst_maps.add_item(list_title)
 		lst_maps.set_item_metadata(lst_maps.get_item_count()-1,o)
+
+func _on_BtnExit_pressed()->void:
+	game.game_state_change_to(game.GameStates.MATCHLIST)
 
 func _on_LstMaps_item_activated(idx:int)->void:
 	activated_idx = idx

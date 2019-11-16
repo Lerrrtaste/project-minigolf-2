@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://rooms/lobby/lobby.gd" type="Script" id=1]
+[ext_resource path="res://helpers/chat/Chat.tscn" type="PackedScene" id=2]
 
 [node name="Lobby" type="Control"]
 anchor_right = 1.0
@@ -14,6 +15,7 @@ anchor_right = 0.95
 anchor_bottom = 0.65
 
 [node name="Opponents" type="Tabs" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -35,21 +37,22 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="MapsContainer" type="GridContainer" parent="TabContainer/Maps"]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 columns = 3
 
-[node name="MapsSelectedContainer2" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
+[node name="MapsSelectedContainer" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
 margin_right = 301.0
 margin_bottom = 46.0
 size_flags_horizontal = 3
 
-[node name="LblMapsSelected" type="Label" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer2"]
+[node name="LblMapsSelected" type="Label" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer"]
 margin_right = 301.0
 margin_bottom = 14.0
 text = "Selected"
 
-[node name="LstMapsSelected" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer2"]
+[node name="LstMapsSelected" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer"]
 margin_top = 18.0
 margin_right = 301.0
 margin_bottom = 18.0
@@ -92,10 +95,35 @@ margin_right = 301.0
 margin_bottom = 46.0
 
 [node name="Settings" type="Tabs" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="SettingsContainer" type="GridContainer" parent="TabContainer/Settings"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -873.6
+margin_bottom = -284.0
+
+[node name="Chat" parent="." instance=ExtResource( 2 )]
+anchor_left = 0.25
+anchor_top = 0.7
+anchor_right = 0.75
+
+[node name="BtnReady" type="CheckButton" parent="."]
+anchor_left = 0.1
+anchor_top = 0.75
+anchor_right = 0.1
+anchor_bottom = 0.75
+
+[node name="LblReady" type="Label" parent="BtnReady"]
+anchor_right = 1.0
+grow_vertical = 0
+text = "Ready?"
+align = 1
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

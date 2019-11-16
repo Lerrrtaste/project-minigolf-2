@@ -46,6 +46,12 @@ editor_unselect={
  ]
 }
 
+[layer_names]
+
+2d_physics/layer_10="all tiles"
+2d_physics/layer_11="wall tiles"
+2d_physics/layer_12="effect tiles"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

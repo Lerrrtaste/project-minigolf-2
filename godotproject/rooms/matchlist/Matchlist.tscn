@@ -26,7 +26,6 @@ anchor_right = 0.05
 anchor_bottom = 0.8
 margin_right = 150.0
 margin_bottom = 40.0
-disabled = true
 text = "Join selected"
 __meta__ = {
 "_edit_lock_": true
