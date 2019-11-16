@@ -12,11 +12,11 @@ Opponents:
 	all players in the room
 
 gamedata
-setting_access:int (open or password)
+setting_passphrase:string (open or password)
 setting_turntimer:int (seconds for each turn)
-setting_voteskip:bool (vote or host only map skip)
-setting_mapselection:int (random, select at lobby,vote after each map)
-settubg_mapcount:int (if not select at at lobby, how many rounds)
+setting_voteskip:int (vote amount or -1 for hostskip only)
+setting_mapmode:int (random, select at lobby,vote after each map)
+settubg_rounds:int (if not select at at lobbymapmode, how many rounds)
 """
 
 onready var lst_opponents = $TabContainer/Opponents/LstOpponents
@@ -24,21 +24,60 @@ onready var chat = $Chat
 onready var btn_ready = $BtnReady
 onready var lbl_ready = $BtnReady/LblReady
 onready var timer = $Timer
+onready var txt_settings_passphrase = $TabContainer/Settings/SettingsContainer/TxtSettingsPassphrase
+onready var spin_settigs_turntimer = $TabContainer/Settings/SettingsContainer/SpinSettingsTurntimer
+onready var check_settings_voteskip = $TabContainer/Settings/SettingsContainer/CheckSettingsVoteskip
+onready var spin_settings_voteskip_required = $TabContainer/Settings/SettingsContainer/SpinSettingsVoteskipRequired
+onready var check_settings_mapmode = $TabContainer/Settings/SettingsContainer/CheckSettingsMapMode
+onready var spin_settings_rounds = $TabContainer/Settings/SettingsContainer/SpinSettingsRounds
+onready var btn_settings_save = $TabContainer/Settings/SettingsContainer/BtnSettingsSave
+onready var lbl_settings_voteskip_required = $TabContainer/Settings/SettingsContainer/LblSettingsVoteskipRequired
+onready var lbl_settings_rounds = $TabContainer/Settings/SettingsContainer/LblSettingsRounds
+onready var btn_exit = $Chat/BtnExit
+onready var maps_tab = $TabContainer/Maps
+onready var tab_container = $TabContainer
 
 const GAME_START_DELAY = 5
 
+enum Settings {
+	PASSPHRASE, #string
+	TURNTIMER, #int 
+	VOTESKIP, #int
+	MAPMODE, #int
+	ROUNDS, #int
+	MAPS #Dictionary {map_ids:int[], added by : presence}
+	}
+
+
+var map_modes = {
+	0:"random",
+	1:"random from featured",
+	2:"selected maps",
+	3:"vote from featured after each round"
+	}
+
+var default_settings = {Settings.PASSPHRASE: "",
+						Settings.TURNTIMER: 30,
+						Settings.VOTESKIP: -1,
+						Settings.MAPMODE: 1,
+						Settings.ROUNDS: 5,
+						Settings.MAPS: []
+						}
 var m #(containes self, matchid and maybe presences)
 var opponents:Dictionary # {userid : {"presence":presence, "ready":bool}
-var gamesettings:Dictionary
+var match_settings:Dictionary
 var countdown:int
+var host_mode := false
+var host_presence:Dictionary
 
 var game
 var nk
 var nkr
 
-
 func initialize(args:Dictionary)->void:
 	m = args["match"]
+	if args["host"]:
+		_is_host()
 	chat.initialize(m["match_id"])
 	if m.has("presences"):
 		for i in m["presences"]:
@@ -58,22 +97,38 @@ func _ready() -> void:
 	nkr.connect("disconnected",self,"_on_Nkr_disconnected")
 	btn_ready.connect("toggled",self,"_on_BtnReady_toggled")
 	timer.connect("timeout",self,"_on_Timer_timeout")
+	btn_exit.connect("pressed",self,"_on_BtnExit_pressed")
+	btn_settings_save.connect("pressed",self,"_on_BtnSettingsSave_pressed")
+	check_settings_voteskip.connect("toggled",self,"_on_CheckSettingsVoteskip_toggled")
+	check_settings_mapmode.connect("item_selected",self,"_on_CheckSettingsMapMode_item_selected")
+	
+	for i in map_modes:
+		check_settings_mapmode.add_item(map_modes[i],i)
 
 
+#presence
 func presence_join(presence:Dictionary)->void:
 	if opponents.has(presence["user_id"]):
 		game.show_error(-1,"Joining presence was already joined:\n%s"%presence)
 		return
 	
 	opponents[presence["user_id"]] = { "presence":presence, "ready": false}
-	lst_opponents.add_item(presence["username"])
+	lst_opponents.add_item(presence["username"] )
 	lst_opponents.set_item_metadata(lst_opponents.get_item_count()-1,presence["user_id"])
 	chat.recieve_message(chat.MessageTypes.EVENT_PRESENCE,"joined",presence["username"])
+	if host_mode:
+		setting_share()
+	if presence != m["self"]: # if someone else joined share current ready state again
+		_on_BtnReady_toggled(btn_ready.pressed)
 
 func presence_leave(presence:Dictionary)->void:
 	if !opponents.has(presence["user_id"]):
 		game.show_error(-1,"Leaving presence was not joined:\n%s"%presence)
 		return
+	
+	if presence["user_id"] == host_presence["user_id"]:
+		game.show_error(-1,"Match closed early, host has left")
+		_on_BtnExit_pressed()
 	
 	opponents.erase(presence)
 	for i in lst_opponents.get_item_count():
@@ -87,22 +142,142 @@ func presence_ready(presence:Dictionary,ready:bool)->void:
 		game.show_error(-1,"Not joined presence sending ready state:\n%s"%presence)
 		return
 	
+	var changed = opponents[presence["user_id"]]["ready"] != ready
+	
 	opponents[presence["user_id"]]["ready"] = ready
 	for i in lst_opponents.get_item_count():
 		if lst_opponents.get_item_metadata(i) == presence["user_id"]:
-			lst_opponents.set_item_text(i, "%s%s"%[("READY | " if ready else ""),presence["username"]])
-	chat.recieve_message(chat.MessageTypes.EVENT_GAME,"is ready" if ready else "is not ready anymore :(",presence["username"])
+			var prefix = "READY | " if ready else ""
+			var suffix = ""
+			if host_presence.has("user_id"):
+				if presence["user_id"] == host_presence["user_id"]:
+					suffix = " (HOST)" 
+			lst_opponents.set_item_text(i,"%s%s%s"%[prefix,presence["username"],suffix])
 	
+	if changed:
+		chat.recieve_message(chat.MessageTypes.EVENT_GAME,"is ready" if ready else "is not ready anymore :(",presence["username"])
+	
+	#loop returns if not all ready 
 	for i in opponents.keys():
 		if opponents[i]["ready"] == false:
 			if !timer.is_stopped():
 				chat.recieve_message(chat.MessageTypes.EVENT_GAME,"Aborting game start")
 				timer.stop()
-			break
-		countdown = GAME_START_DELAY
-		timer.start(1)
-		chat.recieve_message(chat.MessageTypes.EVENT_GAME,"Starting game in...")
+			return
+	countdown = GAME_START_DELAY
+	timer.start(1)
+	chat.recieve_message(chat.MessageTypes.EVENT_GAME,"Starting game in...")
 
+
+#settings
+func setting_set(setting:int,val,silent:bool=false)->void:
+	if match_settings.has(setting):
+		if match_settings[setting] == val:
+			return
+	match_settings[setting] = val
+	var setting_name:String
+	var val_name:String
+	match setting:
+		Settings.MAPS:
+			return
+		Settings.VOTESKIP:
+			setting_name = "Voteskip"
+			val_name = "off" if val == -1 else String(val)
+			check_settings_voteskip.pressed = val != -1
+			spin_settings_voteskip_required.value = val
+		Settings.MAPMODE:
+			setting_name = "MapMode"
+			val_name = map_modes[int(val)]
+			check_settings_mapmode.selected = val
+			tab_container.set_tab_disabled(1,val != 2)
+			if tab_container.current_tab == 1 && val != 2: #change to differenct tab if on maps which gets disabled
+				tab_container.current_tab = 0
+			_on_CheckSettingsMapMode_item_selected(val)
+		Settings.PASSPHRASE:
+			setting_name = "Passphrase"
+			val_name = "*******"
+			if host_mode:
+				txt_settings_passphrase.text = val
+		Settings.TURNTIMER:
+			setting_name = "Turntimer"
+			val_name = "%ss"%val
+			spin_settigs_turntimer.value = val
+		Settings.ROUNDS:
+			setting_name = "Rounds"
+			val_name = String(val)
+			spin_settings_rounds.value = val
+	if !silent:
+		chat.recieve_message(chat.MessageTypes.EVENT_GAME,"%s set to %s"%[setting_name,val_name])
+
+func setting_map_change(map_ids_add:Array,map_ids_remove:Array, presence:Dictionary)->void:
+	chat.recieve_message(chat.MessageTypes.EVENT_PRESENCE," added %s and removed %s maps from the selection",presence["username"])
+	if host_mode:
+		for i in map_ids_add:
+			if !match_settings[Settings.MAPS]["map_ids"].has(i):
+				match_settings[Settings.MAPS]["map_ids"].append(i)
+		for i in map_ids_remove:
+			match_settings[Settings.MAPS]["map_ids"].erase(i)
+		setting_share()
+
+func setting_share()->void:
+	if !host_mode:
+		game.show_error(-1,"Trying to share match_settings while not in hostmode!")
+		return
+	var data = JSON.print({"match_settings":match_settings, "host":m["self"]})
+	var promise = nkr.send({"match_data_send" : {"op_code":1002,"match_id":m["match_id"],"data":data}})
+	game.check_promise(promise)
+	chat.recieve_message(chat.MessageTypes.EVENT_GAME,"Settings have been updated")
+
+func setting_save()->void:
+	if !host_mode:
+		game.show_error(-1,"Trying to save settings while not in host mode")
+		return
+	
+	setting_set(Settings.PASSPHRASE,txt_settings_passphrase.text)
+	setting_set(Settings.TURNTIMER,spin_settigs_turntimer.value)
+	setting_set(Settings.VOTESKIP,spin_settings_voteskip_required.value if check_settings_voteskip.pressed else -1)
+	setting_set(Settings.MAPMODE,check_settings_mapmode.selected)
+	setting_set(Settings.ROUNDS,spin_settings_rounds.value)
+	setting_share()
+
+
+#host
+func _is_host()->void:
+	host_mode = true
+	host_presence = m["self"]
+	chat.recieve_message(chat.MessageTypes.EVENT_GAME,"You are the game host!")
+	txt_settings_passphrase.editable = true
+	spin_settigs_turntimer.editable = true
+	check_settings_voteskip.disabled = false
+	spin_settings_voteskip_required.editable = true
+	check_settings_mapmode.disabled = false
+	spin_settings_rounds.editable = true
+	btn_settings_save.disabled = false
+	
+	for i in default_settings.keys():
+		setting_set(i,default_settings[i],true)
+
+func _set_host(host_presence:Dictionary)->void:
+	self.host_presence = host_presence
+	chat.recieve_message(chat.MessageTypes.EVENT_PRESENCE,"is the game host!",host_presence["username"])
+	presence_ready(host_presence,opponents[host_presence["user_id"]]["ready"]) # TO UPDATE USERNAME (ADD " (HOST)")
+
+
+#events
+func _on_CheckSettingsVoteskip_toggled(val:bool)->void:
+	lbl_settings_voteskip_required.visible = val
+	spin_settings_voteskip_required.visible = val
+
+func _on_CheckSettingsMapMode_item_selected(id:int)->void:
+	lbl_settings_rounds.visible = id != 2
+	spin_settings_rounds.visible = id != 2
+
+func _on_BtnSettingsSave_pressed()->void:
+	setting_save()
+
+func _on_BtnExit_pressed()->void:
+	nkr.send({"match_leave":{"match_id":m["match_id"]}})
+	game.game_state_change_to(game.GameStates.MATCHLIST)
 
 func _on_Timer_timeout()->void: #TODO start game here
 	if countdown == 0:
@@ -134,8 +309,13 @@ func _on_Nkr_match_data(data:Dictionary)->void:
 			chat.recieve_message(match_data["message_type"],match_data["content"],data["presence"]["username"])
 		1001: #user ready
 			presence_ready(data["presence"],match_data["ready"])
-		1002: #gamedata update
-			pass
+		1002: #match_settings update
+			if !host_presence.has_all(["user_id","username","session_id"]):
+				_set_host(match_data["host"])
+			for i in match_data["match_settings"].keys():
+				setting_set(int(i),match_data["match_settings"][i])
+		1003: #map_id change:
+			setting_map_change(match_data["map_ids_add"],match_data["map_ids_remove"],data["presence"])
 
 func _on_Nkr_match_presence(data:Dictionary)->void:
 #	if !data.has("match_presence_event"):

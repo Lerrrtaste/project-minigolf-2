@@ -88,6 +88,7 @@ func _on_BtnJoinId_pressed()->void:
 
 func _on_BtnRefresh_pressed()->void:
 	_disable_buttons(true)
+	matches.clear()
 	var promise = nk.list_matches(100,false,"",0,0,"")
 	yield(promise,"completed")
 	if !game.check_promise(promise):
@@ -95,7 +96,6 @@ func _on_BtnRefresh_pressed()->void:
 	if !promise.response["data"].has("matches"):
 		game.show_error(-1,"No matches available!")
 	else:
-		matches.clear()
 		for m in promise.response["data"]["matches"]:
 			matches.append(m)
 		_matchlist_update()

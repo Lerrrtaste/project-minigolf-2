@@ -1,4 +1,13 @@
 extends Control
+"""
+Chat widget
+
+Needs to be initialized with match id
+
+recieve_message to display game messages
+usertext messages are displayed automatically
+"""
+
 
 onready var txt_message = $TxtMessage
 onready var chat = $Chatlog
@@ -50,23 +59,24 @@ func recieve_error(content:String)->void:
 
 
 func _chatlog_add(message_type:int,content:String,username:String = "")->void:
-	var new_text := ""
+	var time = OS.get_time()
+	var new_text := "\n%s:%s:%s - "%[time["hour"],time["minute"],time["second"]] #prefix
 	match message_type:
 		MessageTypes.USERTEXT:
-			new_text = "\n[b]%s[/b]:\n%s"%[username,content]
+			new_text += "[b]%s[/b]:\n%s"%[username,content]
 		MessageTypes.EVENT_PRESENCE:
-			new_text = "\n[b]%s[/b] [i]%s[/i]"%[username,content]
+			new_text += "[b]%s[/b] [i]%s[/i]"%[username,content]
 		MessageTypes.EVENT_GAME:
 			if username == "":
-				new_text = "\n[u]%s[/u]"%content
+				new_text += "[u]%s[/u]"%content
 			else:
-				new_text = "\n[b]%s[/b] [u]%s[/u]"%[username,content]
+				new_text += "[b]%s[/b] [u]%s[/u]"%[username,content]
 		MessageTypes.DEBUG:
 			if !game.debugging:
 				return
-			new_text = content
+			new_text += content
 		MessageTypes.ERROR:
-			new_text = "\n[color=red][b]ERROR:\n%s[/b][/color]"%content
+			new_text += "[color=red][b]ERROR:\n%s[/b][/color]"%content
 		_:
 			recieve_error("Recieved message with unknown message type")
 	chat.bbcode_text += new_text

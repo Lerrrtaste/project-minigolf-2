@@ -15,6 +15,7 @@ anchor_right = 0.95
 anchor_bottom = 0.65
 
 [node name="Opponents" type="Tabs" parent="TabContainer"]
+editor/display_folded = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,7 +29,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Maps" type="Tabs" parent="TabContainer"]
-visible = false
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -95,6 +96,8 @@ margin_right = 301.0
 margin_bottom = 46.0
 
 [node name="Settings" type="Tabs" parent="TabContainer"]
+editor/display_folded = true
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -103,17 +106,151 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="SettingsContainer" type="GridContainer" parent="TabContainer/Settings"]
-anchor_right = 1.0
+anchor_left = 0.1
+anchor_right = 0.9
 anchor_bottom = 1.0
-margin_right = -873.6
-margin_bottom = -284.0
+columns = 2
+
+[node name="LblSettingsPassphrase" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+margin_top = 5.0
+margin_right = 363.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Password"
+align = 2
+
+[node name="TxtSettingsPassphrase" type="LineEdit" parent="TabContainer/Settings/SettingsContainer"]
+margin_left = 367.0
+margin_right = 730.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+editable = false
+placeholder_text = "Leave empty for no password protection"
+
+[node name="LblSettingsTurntimer" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+margin_top = 33.0
+margin_right = 363.0
+margin_bottom = 47.0
+size_flags_horizontal = 3
+text = "Max time per turn"
+align = 2
+
+[node name="SpinSettingsTurntimer" type="SpinBox" parent="TabContainer/Settings/SettingsContainer"]
+margin_left = 367.0
+margin_top = 28.0
+margin_right = 441.0
+margin_bottom = 52.0
+size_flags_horizontal = 0
+min_value = 1.0
+max_value = 300.0
+value = 30.0
+rounded = true
+editable = false
+suffix = "s"
+
+[node name="LblSettingsVoteskip" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+margin_top = 61.0
+margin_right = 363.0
+margin_bottom = 75.0
+size_flags_horizontal = 3
+text = "Allow map voteskip"
+align = 2
+
+[node name="CheckSettingsVoteskip" type="CheckBox" parent="TabContainer/Settings/SettingsContainer"]
+margin_left = 367.0
+margin_top = 56.0
+margin_right = 535.0
+margin_bottom = 80.0
+size_flags_horizontal = 0
+disabled = true
+text = "(Host can always skip)"
+
+[node name="LblSettingsVoteskipRequired" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+visible = false
+margin_top = 89.0
+margin_right = 363.0
+margin_bottom = 103.0
+size_flags_horizontal = 3
+text = "Votes required to skip a map"
+align = 2
+
+[node name="SpinSettingsVoteskipRequired" type="SpinBox" parent="TabContainer/Settings/SettingsContainer"]
+visible = false
+margin_top = 84.0
+margin_right = 74.0
+margin_bottom = 108.0
+size_flags_horizontal = 0
+min_value = 1.0
+max_value = 300.0
+value = 1.0
+rounded = true
+editable = false
+
+[node name="LblSettingsMapMode" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+margin_top = 87.0
+margin_right = 363.0
+margin_bottom = 101.0
+size_flags_horizontal = 3
+text = "Map selection mode"
+align = 2
+
+[node name="CheckSettingsMapMode" type="OptionButton" parent="TabContainer/Settings/SettingsContainer"]
+margin_left = 367.0
+margin_top = 84.0
+margin_right = 606.0
+margin_bottom = 104.0
+size_flags_horizontal = 0
+disabled = true
+text = "Default (random from trending)"
+
+[node name="LblSettingsRounds" type="Label" parent="TabContainer/Settings/SettingsContainer"]
+visible = false
+margin_top = 139.0
+margin_right = 363.0
+margin_bottom = 153.0
+size_flags_horizontal = 3
+text = "Rounds"
+align = 2
+
+[node name="SpinSettingsRounds" type="SpinBox" parent="TabContainer/Settings/SettingsContainer"]
+visible = false
+margin_left = 367.0
+margin_top = 136.0
+margin_right = 441.0
+margin_bottom = 160.0
+size_flags_horizontal = 0
+min_value = 1.0
+max_value = 300.0
+value = 1.0
+rounded = true
+editable = false
+
+[node name="BtnSettingsSave" type="Button" parent="TabContainer/Settings/SettingsContainer"]
+margin_left = 267.0
+margin_top = 108.0
+margin_right = 363.0
+margin_bottom = 128.0
+size_flags_horizontal = 8
+disabled = true
+text = "Save settings"
 
 [node name="Chat" parent="." instance=ExtResource( 2 )]
+editor/display_folded = true
 anchor_left = 0.25
 anchor_top = 0.7
 anchor_right = 0.75
 
+[node name="BtnExit" type="Button" parent="Chat"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 50.0
+grow_vertical = 0
+text = "Leave match"
+
 [node name="BtnReady" type="CheckButton" parent="."]
+editor/display_folded = true
 anchor_left = 0.1
 anchor_top = 0.75
 anchor_right = 0.1
