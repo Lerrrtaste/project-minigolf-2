@@ -17,6 +17,7 @@ setting_turntimer:int (seconds for each turn)
 setting_voteskip:int (vote amount or -1 for hostskip only)
 setting_mapmode:int (random, select at lobby,vote after each map)
 settubg_rounds:int (if not select at at lobbymapmode, how many rounds)
+setting_maps:Dictionary {map_ids:int[], added by : presence}
 """
 
 onready var lst_opponents = $TabContainer/Opponents/LstOpponents
@@ -36,6 +37,8 @@ onready var lbl_settings_rounds = $TabContainer/Settings/SettingsContainer/LblSe
 onready var btn_exit = $Chat/BtnExit
 onready var maps_tab = $TabContainer/Maps
 onready var tab_container = $TabContainer
+onready var lst_maps_user = $TabContainer/Maps/MapsContainer/MapsBrowse/LstMapsUser
+onready var lst_maps_selected = $TabContainer/Maps/MapsContainer/MapsSelectedContainer/LstMapsSelected
 
 const GAME_START_DELAY = 5
 
@@ -59,7 +62,7 @@ var map_modes = {
 var default_settings = {Settings.PASSPHRASE: "",
 						Settings.TURNTIMER: 30,
 						Settings.VOTESKIP: -1,
-						Settings.MAPMODE: 1,
+						Settings.MAPMODE: 2,
 						Settings.ROUNDS: 5,
 						Settings.MAPS: []
 						}
@@ -101,9 +104,76 @@ func _ready() -> void:
 	btn_settings_save.connect("pressed",self,"_on_BtnSettingsSave_pressed")
 	check_settings_voteskip.connect("toggled",self,"_on_CheckSettingsVoteskip_toggled")
 	check_settings_mapmode.connect("item_selected",self,"_on_CheckSettingsMapMode_item_selected")
+	lst_maps_user.connect("item_activated",self,"_on_LstMapsUser_item_activated")
+	lst_maps_selected.connect("item_activated",self,"_on_LstMapsSelected_item_activated")
 	
 	for i in map_modes:
 		check_settings_mapmode.add_item(map_modes[i],i)
+	
+	maps_update()
+
+
+#maps
+func maps_update()->void:
+	#TODO list featured
+	#own public maps
+	lst_maps_user.clear()
+	var promise = nk.list_storage_objects("maps",game.user["user"]["id"],100)
+	yield(promise,"completed")
+	game.check_promise(promise)
+	
+	if !promise.response["data"].has("objects"):
+		return
+	
+	for i in promise.response["data"]["objects"]:
+		if i["permission_read"] != 2:
+			continue
+		var parse_result = JSON.parse(i["value"])
+		if parse_result.error != OK:
+			game.show_error(-1,"Map data corrupt. Cant load! Parse error:\n%s\nat line: %s"%[parse_result.error_string,parse_result.error_line])
+			continue
+		var mapdata = parse_result.result
+		var list_title = "%s by %s"%[mapdata["name"],game.user["user"]["username"]]
+		lst_maps_user.add_item(list_title)
+		lst_maps_user.set_item_metadata(lst_maps_user.get_item_count()-1,i)
+
+func _map_select(map_id:String,map_owner_uid:String)->void:
+	for i in lst_maps_selected.get_item_count():
+		if lst_maps_selected.get_item_metadata(i) == map_id:
+			game.show_error(-1,"Map was already selected! ID:%s"%map_id)
+			return #map already selected
+	
+	var promise = nk.read_storage_objects([{"collection":"maps","key":map_id,"user_id":map_owner_uid}])
+	yield(promise,"completed")
+	if !game.check_promise(promise):
+		return
+	var obj = promise.response["data"]["objects"][0]
+	var parse_result = JSON.parse(obj["value"])
+	if parse_result.error != OK:
+		game.show_error(-1,"Map data corrupt. Cant load! Parse error:\n%s\nat line: %s"%[parse_result.error_string,parse_result.error_line])
+		return
+	obj["mapdata"] = parse_result.result
+	var list_title = "%s by %s"%[obj["mapdata"]["name"],game.user["user"]["username"]]
+	lst_maps_selected.add_item(list_title)
+	#game.show_error(-1,"ADDDDDDDING: %s"%obj)
+	lst_maps_selected.set_item_metadata(lst_maps_selected.get_item_count()-1,obj["mapdata"]["map_id"])
+
+func _map_deselect(map_id:String)->void:
+	for i in lst_maps_selected.get_item_count():
+		if lst_maps_selected.get_item_metadata(i) == map_id:
+			lst_maps_selected.remove_item(i)
+			return
+	game.show_error(-1,"Trying to deselect not selected map! ID:%s"%map_id)
+
+func map_request(add:Array,remove:Array)->void:
+	var data = JSON.print({"add":add, "remove":remove})
+	var match_data = {"op_code":1003,"match_id":m["match_id"],"data":data}
+	if host_mode:
+		match_data["presence"] = m["self"]
+		_on_Nkr_match_data(match_data)
+	else:
+		nkr.send({"match_data_send":match_data})
+
 
 
 #presence
@@ -179,7 +249,9 @@ func setting_set(setting:int,val,silent:bool=false)->void:
 	var val_name:String
 	match setting:
 		Settings.MAPS:
-			return
+			for i in val:
+				lst_maps_selected.clear()
+				_map_select(i["map_id"],i["map_owner_uid"])
 		Settings.VOTESKIP:
 			setting_name = "Voteskip"
 			val_name = "off" if val == -1 else String(val)
@@ -209,14 +281,16 @@ func setting_set(setting:int,val,silent:bool=false)->void:
 	if !silent:
 		chat.recieve_message(chat.MessageTypes.EVENT_GAME,"%s set to %s"%[setting_name,val_name])
 
-func setting_map_change(map_ids_add:Array,map_ids_remove:Array, presence:Dictionary)->void:
-	chat.recieve_message(chat.MessageTypes.EVENT_PRESENCE," added %s and removed %s maps from the selection",presence["username"])
+func setting_map_change(add:Array,remove:Array, presence:Dictionary)->void:
+	chat.recieve_message(chat.MessageTypes.EVENT_PRESENCE,"added %s and removed %s maps from the selection"%[add.size(),remove.size()],presence["username"])
 	if host_mode:
-		for i in map_ids_add:
-			if !match_settings[Settings.MAPS]["map_ids"].has(i):
-				match_settings[Settings.MAPS]["map_ids"].append(i)
-		for i in map_ids_remove:
-			match_settings[Settings.MAPS]["map_ids"].erase(i)
+		for i in add:
+			if !match_settings[Settings.MAPS].has(i):
+				match_settings[Settings.MAPS].append(i)
+				_map_select(i["map_id"],i["map_owner_uid"])
+		for i in remove:
+			match_settings[Settings.MAPS].erase(i)
+			_map_deselect(i)
 		setting_share()
 
 func setting_share()->void:
@@ -264,6 +338,13 @@ func _set_host(host_presence:Dictionary)->void:
 
 
 #events
+func _on_LstMapsUser_item_activated(idx:int)->void:
+	var obj = lst_maps_user.get_item_metadata(idx)
+	map_request([{"map_id":obj["key"], "map_owner_uid":obj["user_id"]}],[])
+
+func _on_LstMapsSelected_item_activated(idx:int)->void:
+	map_request([],[lst_maps_selected.get_item_metadata(idx)])
+
 func _on_CheckSettingsVoteskip_toggled(val:bool)->void:
 	lbl_settings_voteskip_required.visible = val
 	spin_settings_voteskip_required.visible = val
@@ -315,7 +396,7 @@ func _on_Nkr_match_data(data:Dictionary)->void:
 			for i in match_data["match_settings"].keys():
 				setting_set(int(i),match_data["match_settings"][i])
 		1003: #map_id change:
-			setting_map_change(match_data["map_ids_add"],match_data["map_ids_remove"],data["presence"])
+			setting_map_change(match_data["add"],match_data["remove"],data["presence"])
 
 func _on_Nkr_match_presence(data:Dictionary)->void:
 #	if !data.has("match_presence_event"):

@@ -29,7 +29,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Maps" type="Tabs" parent="TabContainer"]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -38,14 +37,13 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="MapsContainer" type="GridContainer" parent="TabContainer/Maps"]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 columns = 3
 
 [node name="MapsSelectedContainer" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
 margin_right = 301.0
-margin_bottom = 46.0
+margin_bottom = 324.0
 size_flags_horizontal = 3
 
 [node name="LblMapsSelected" type="Label" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer"]
@@ -56,34 +54,49 @@ text = "Selected"
 [node name="LstMapsSelected" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsSelectedContainer"]
 margin_top = 18.0
 margin_right = 301.0
-margin_bottom = 18.0
+margin_bottom = 324.0
+size_flags_vertical = 3
 
-[node name="MapsFeaturedContainer" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
+[node name="MapsBrowse" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
 margin_left = 305.0
 margin_right = 606.0
-margin_bottom = 46.0
+margin_bottom = 324.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="LblMapsFeatured" type="Label" parent="TabContainer/Maps/MapsContainer/MapsFeaturedContainer"]
+[node name="LblMapsFeatured" type="Label" parent="TabContainer/Maps/MapsContainer/MapsBrowse"]
 margin_right = 301.0
 margin_bottom = 14.0
-text = "Selected Maps"
+text = "Featured by Lerrrtaste"
 
-[node name="LstMapsFeatured" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsFeaturedContainer"]
+[node name="LstMapsFeatured" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsBrowse"]
 margin_top = 18.0
 margin_right = 301.0
-margin_bottom = 18.0
+margin_bottom = 160.0
+size_flags_vertical = 3
+
+[node name="LblMapsUser" type="Label" parent="TabContainer/Maps/MapsContainer/MapsBrowse"]
+margin_top = 164.0
+margin_right = 301.0
+margin_bottom = 178.0
+text = "Your public maps"
+
+[node name="LstMapsUser" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsBrowse"]
+margin_top = 182.0
+margin_right = 301.0
+margin_bottom = 324.0
+size_flags_vertical = 3
 
 [node name="MapsSearchContainer" type="VBoxContainer" parent="TabContainer/Maps/MapsContainer"]
 margin_left = 610.0
 margin_right = 911.0
-margin_bottom = 46.0
+margin_bottom = 324.0
 size_flags_horizontal = 3
 
 [node name="LblMapsSearch" type="Label" parent="TabContainer/Maps/MapsContainer/MapsSearchContainer"]
 margin_right = 301.0
 margin_bottom = 14.0
-text = "Search"
+text = "Search (by name, id or tags)"
 
 [node name="TxtMapsSearch" type="LineEdit" parent="TabContainer/Maps/MapsContainer/MapsSearchContainer"]
 margin_top = 18.0
@@ -93,7 +106,8 @@ margin_bottom = 42.0
 [node name="LstMapsSearch" type="ItemList" parent="TabContainer/Maps/MapsContainer/MapsSearchContainer"]
 margin_top = 46.0
 margin_right = 301.0
-margin_bottom = 46.0
+margin_bottom = 324.0
+size_flags_vertical = 3
 
 [node name="Settings" type="Tabs" parent="TabContainer"]
 editor/display_folded = true

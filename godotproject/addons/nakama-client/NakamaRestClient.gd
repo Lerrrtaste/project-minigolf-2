@@ -660,7 +660,7 @@ func read_storage_objects(object_ids: Array):
 signal list_storage_objects_completed (response, request)
 
 # List publicly readable storage objects in a given collection.
-func list_storage_objects(collection: String, user_id: String, limit: int = 100, cursor: String = ''):
+func list_storage_objects(collection: String, user_id: String = "", limit: int = 1, cursor: String = ''):
 	var request = {
 		method = HTTPClient.METHOD_GET,
 		path = 'v2/storage/' + collection,
@@ -668,8 +668,9 @@ func list_storage_objects(collection: String, user_id: String, limit: int = 100,
 		name = 'list_storage_objects',
 	}
 	
-	request['query_string']['user_id'] = user_id
-	if limit != 100:
+	if user_id != "":
+		request['query_string']['user_id'] = user_id
+	if limit != 1:
 		request['query_string']['limit'] = limit
 	if cursor != '':
 		request['query_string']['cursor'] = cursor
