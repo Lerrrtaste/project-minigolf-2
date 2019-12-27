@@ -41,6 +41,7 @@ func _matchlist_update()->void:
 	_disable_buttons(true)
 
 func _disable_buttons(val:bool)->void:
+	return #disabled for now
 	btn_create.disabled = val
 	btn_editor.disabled = val
 	btn_join_id.disabled = val

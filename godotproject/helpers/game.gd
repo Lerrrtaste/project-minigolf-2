@@ -17,7 +17,7 @@ var username:String
 var user:Dictionary
 
 #server settings
-const HOST:String = "192.168.0.234"
+const HOST:String = "192.168.0.213"
 const PORT:int = 7350
 const KEY:String = "defaultkey"
 const GAME_VERSION = 1
@@ -91,7 +91,7 @@ func show_error(code:int = -1, message:String = "", promise:Object = null)->void
 	error_queue.append([code,message,promise])
 
 func game_state_change_to(new_state:int,args:Dictionary = {})->void:
-	if debugging: print("Changing state to GameState: %s%s"%[get_game_state_name(new_state)," with args: "+String(args)])
+	if debugging: print("!!!!!!!!\nChanging state to GameState: %s%s"%[get_game_state_name(new_state)," with args: "+String(args)])
 	if GameStateScenesPath.keys().has(new_state):
 		if room != null:
 			room.queue_free()

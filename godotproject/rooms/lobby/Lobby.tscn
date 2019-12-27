@@ -29,6 +29,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Maps" type="Tabs" parent="TabContainer"]
+editor/display_folded = true
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -37,6 +39,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="MapsContainer" type="GridContainer" parent="TabContainer/Maps"]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 columns = 3
@@ -110,8 +113,6 @@ margin_bottom = 324.0
 size_flags_vertical = 3
 
 [node name="Settings" type="Tabs" parent="TabContainer"]
-editor/display_folded = true
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -235,7 +236,7 @@ margin_bottom = 160.0
 size_flags_horizontal = 0
 min_value = 1.0
 max_value = 300.0
-value = 1.0
+value = 3.0
 rounded = true
 editable = false
 
